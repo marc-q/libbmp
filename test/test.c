@@ -1,7 +1,6 @@
 /* Copyright 2016 Marc Volker Dickmann */
 /* Project: LibBMP */
 #include <stdio.h>
-#include <stdlib.h>
 #include "../libbmp.h"
 
 static void bmp_test_write_bw (void)
