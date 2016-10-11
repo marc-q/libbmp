@@ -1,6 +1,6 @@
 CC = gcc
 OBJECTS = ../libbmp.c test.c
-LIBS = -lm
+LIBS =
 CFLAGS = -Wall -O2
 BINDIR = $(DESTDIR)/usr/bin
 NAME = test
