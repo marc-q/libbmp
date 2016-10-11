@@ -9,7 +9,7 @@
 void bmp_header_init_df (bmp_header *header, int width, int height)
 {
 	/* Init a bmp_header with the default values. */
-	header->bfSize = (sizeof (bmp_pixel) * (width * height)) + (BMP_GET_PADDING (width) * height);
+	header->bfSize = (sizeof (bmp_pixel) * width * height) + (sizeof (unsigned char) * BMP_GET_PADDING (width) * height);
 	header->bfReserved = 0;
 	header->bfOffBits = 54;
 	header->biSize = 40;
