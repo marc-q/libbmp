@@ -51,6 +51,29 @@ int bmp_header_write (const bmp_header *header, FILE *img_file)
 	return 0;
 }
 
+int bmp_header_read (bmp_header *header, FILE *img_file)
+{
+	unsigned short magic;
+	
+	if (img_file == NULL)
+	{
+		/* ERROR: No file opened! */
+		return -1;
+	}
+	
+	/* Check if its an bmp file by comparing the magic nbr: */
+	fread (&magic, sizeof (magic), 1, img_file);
+	
+	if (magic != BMP_MAGIC)
+	{
+		/* ERROR: Not an BMP file! */
+		return -2;
+	}
+	
+	fread (header, sizeof (bmp_header), 1, img_file);
+	return 0;
+}
+
 /* BMP_PIXEL */
 
 void bmp_pixel_init (bmp_pixel *pxl, const unsigned char red, const unsigned char green, const unsigned char blue)
@@ -62,11 +85,9 @@ void bmp_pixel_init (bmp_pixel *pxl, const unsigned char red, const unsigned cha
 
 /* BMP_IMG */
 
-void bmp_img_init_df (bmp_img *img, const int width, const int height)
+void bmp_img_init (bmp_img *img, const int width, const int height)
 {
 	int y;
-	
-	bmp_header_init_df (&img->img_header, width, height);
 	
 	/* Allocate the required memory for the pixels: */
 	img->img_pixels = (bmp_pixel**) malloc (sizeof (bmp_pixel*) * height);
@@ -75,6 +96,14 @@ void bmp_img_init_df (bmp_img *img, const int width, const int height)
 	{
 		img->img_pixels[y] = (bmp_pixel*) malloc (sizeof (bmp_pixel) * width);
 	}
+}
+
+void bmp_img_init_df (bmp_img *img, const int width, const int height)
+{
+	/* INIT the header with default values: */
+	bmp_header_init_df (&img->img_header, width, height);
+	/* INIT the img: */
+	bmp_img_init (img, width, height);
 }
 
 void bmp_img_free (bmp_img *img)
@@ -101,9 +130,7 @@ int bmp_img_write (const bmp_img *img, const char *filename)
 		/* ERROR: File could'nt be opened! */
 		return -1;
 	}
-	
-	/* Write the header: */
-	if (bmp_header_write (&img->img_header, img_file) != 0)
+	else if (bmp_header_write (&img->img_header, img_file) != 0)
 	{
 		/* ERROR: Could'nt write the header! */
 		fclose (img_file);
@@ -126,6 +153,41 @@ int bmp_img_write (const bmp_img *img, const char *filename)
 	}
 	
 	/* NOTE: All good! */
+	fclose (img_file);
+	return 0;
+}
+
+int bmp_img_read (bmp_img *img, const char *filename)
+{
+	int y;
+	FILE *img_file;
+	
+	img_file = fopen (filename, "rb");
+	
+	if (img_file == NULL)
+	{
+		/* ERROR: File could'nt be opened! */
+		return -1;
+	}
+	else if (bmp_header_read (&img->img_header, img_file) != 0)
+	{
+		/* ERROR: Could'nt read the image header! */
+		fclose (img_file);
+		return -2;
+	}
+	
+	bmp_img_init (img, img->img_header.biWidth, img->img_header.biHeight);
+	
+	// TODO: Implement a way to read backwards to be compatible with negative values for biHeight!
+	for (y = 0; y < img->img_header.biWidth; y++)
+	{
+		/* Read a whole row of pixels from the file: */
+		fread (img->img_pixels[y], sizeof (bmp_pixel) * img->img_header.biWidth, 1, img_file);
+		
+		/* Skip the padding: */
+		fseek (img_file, sizeof (unsigned char) * BMP_GET_PADDING (img->img_header.biWidth), SEEK_CUR);
+	}
+	
 	fclose (img_file);
 	return 0;
 }
