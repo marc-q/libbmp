@@ -7,36 +7,29 @@
 static void bmp_test_write_bw (void)
 {
 	int x, y;
-	bmp_pixel **pxls;
+	bmp_img img;
 	
-	pxls = (bmp_pixel**) malloc (sizeof (bmp_pixel*) * 512);
+	bmp_img_init_df (&img, 512, 512);
 
+	/* Draw a checkerboard pattern: */
 	for (y = 0; y < 512; y++)
-	{
-		pxls[y] = (bmp_pixel*) malloc (sizeof (bmp_pixel) * 512);
-		
+	{	
 		for (x = 0; x < 512; x++)
 		{
-			/* Draw a checkerboard pattern: */
 			if ((y % 128 < 64 && x % 128 < 64) ||
 			    (y % 128 >= 64 && x % 128 >= 64))
 			{
-				bmp_pixel_init (&pxls[y][x], 250, 250, 250);
+				bmp_pixel_init (&img.img_pixels[y][x], 250, 250, 250);
 			}
 			else
 			{
-				bmp_pixel_init (&pxls[y][x], 0, 0, 0);
+				bmp_pixel_init (&img.img_pixels[y][x], 0, 0, 0);
 			}
 		}
 	}
 	
-	bmp_img_write ("test.bmp", pxls, 512, 512);
-
-	for (y = 0; y < 512; y++)
-	{
-		free (pxls[y]);
-	}
-	free (pxls);
+	bmp_img_write (&img, "test.bmp");
+	bmp_img_free (&img);
 }
 
 int main (int argc, char *argv[])

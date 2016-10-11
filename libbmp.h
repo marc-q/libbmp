@@ -34,14 +34,24 @@ struct _bmp_pixel
 
 typedef struct _bmp_pixel bmp_pixel;
 
+struct _bmp_img
+{
+	bmp_header img_header;
+	bmp_pixel **img_pixels;
+};
+
+typedef struct _bmp_img bmp_img;
+
 /* BMP_HEADER */
-void bmp_header_init_df (bmp_header*, int, int);
-int bmp_header_write (bmp_header*, FILE*);
+void bmp_header_init_df (bmp_header*, const int, const int);
+int bmp_header_write (const bmp_header*, FILE*);
 
 /* BMP_PIXEL */
-void bmp_pixel_init (bmp_pixel*, unsigned char, unsigned char, unsigned char);
+void bmp_pixel_init (bmp_pixel*, const unsigned char, const unsigned char, const unsigned char);
 
-/* BMP_MISC */
-int bmp_img_write (char*, bmp_pixel**, int, int);
+/* BMP_IMG */
+void bmp_img_init_df (bmp_img*, const int, const int);
+void bmp_img_free (bmp_img*);
+int bmp_img_write (const bmp_img*, const char*);
 
 #endif /* __LIBBMP_H__ */
