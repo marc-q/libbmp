@@ -32,13 +32,13 @@ int bmp_header_write (const bmp_header *header, FILE *img_file)
 	/* Check for errors: */
 	if (header == NULL)
 	{
-		/* ERROR: bmp_header unitizalized! */
-		return -1; 
+		/* ERROR: bmp_header not initialized! */
+		return BMP_HEADER_NOT_INITIALIZED; 
 	}
 	else if (img_file == NULL)
 	{
 		/* ERROR: No file opened! */
-		return -2;
+		return BMP_FILE_NOT_OPENED;
 	}
 	
 	magic = BMP_MAGIC;
@@ -48,7 +48,7 @@ int bmp_header_write (const bmp_header *header, FILE *img_file)
 	fwrite (header, sizeof (bmp_header), 1, img_file);
 	
 	/* NOTE: All good! */
-	return 0;
+	return BMP_OK;
 }
 
 int bmp_header_read (bmp_header *header, FILE *img_file)
@@ -58,7 +58,7 @@ int bmp_header_read (bmp_header *header, FILE *img_file)
 	if (img_file == NULL)
 	{
 		/* ERROR: No file opened! */
-		return -1;
+		return BMP_FILE_NOT_OPENED;
 	}
 	
 	/* Check if its an bmp file by comparing the magic nbr: */
@@ -67,11 +67,11 @@ int bmp_header_read (bmp_header *header, FILE *img_file)
 	if (magic != BMP_MAGIC)
 	{
 		/* ERROR: Not an BMP file! */
-		return -2;
+		return BMP_INVALID_FILE;
 	}
 	
 	fread (header, sizeof (bmp_header), 1, img_file);
-	return 0;
+	return BMP_OK;
 }
 
 /* BMP_PIXEL */
@@ -119,7 +119,7 @@ void bmp_img_free (bmp_img *img)
 
 int bmp_img_write (const bmp_img *img, const char *filename)
 {
-	unsigned int x, y;
+	int x, y;
 	unsigned char padding;
 	FILE *img_file;
 	
@@ -128,13 +128,17 @@ int bmp_img_write (const bmp_img *img, const char *filename)
 	if (img_file == NULL)
 	{
 		/* ERROR: File could'nt be opened! */
-		return -1;
+		return BMP_FILE_NOT_OPENED;
 	}
-	else if (bmp_header_write (&img->img_header, img_file) != 0)
+	
+	/* NOTE: This way the correct error code could be returned. */
+	y = bmp_header_write (&img->img_header, img_file);
+	
+	if (y != BMP_OK)
 	{
 		/* ERROR: Could'nt write the header! */
 		fclose (img_file);
-		return -2;
+		return y;
 	}
 	
 	/* Write the content: */
@@ -154,7 +158,7 @@ int bmp_img_write (const bmp_img *img, const char *filename)
 	
 	/* NOTE: All good! */
 	fclose (img_file);
-	return 0;
+	return BMP_OK;
 }
 
 int bmp_img_read (bmp_img *img, const char *filename)
@@ -167,13 +171,17 @@ int bmp_img_read (bmp_img *img, const char *filename)
 	if (img_file == NULL)
 	{
 		/* ERROR: File could'nt be opened! */
-		return -1;
+		return BMP_FILE_NOT_OPENED;
 	}
-	else if (bmp_header_read (&img->img_header, img_file) != 0)
+	
+	/* NOTE: This way the correct error code could be returned. */
+	y = bmp_header_read (&img->img_header, img_file);
+	
+	if (y != BMP_OK)
 	{
 		/* ERROR: Could'nt read the image header! */
 		fclose (img_file);
-		return -2;
+		return y;
 	}
 	
 	bmp_img_alloc (img);
@@ -189,5 +197,5 @@ int bmp_img_read (bmp_img *img, const char *filename)
 	}
 	
 	fclose (img_file);
-	return 0;
+	return BMP_OK;
 }
