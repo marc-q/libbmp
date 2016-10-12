@@ -164,6 +164,7 @@ int bmp_img_write (const bmp_img *img, const char *filename)
 int bmp_img_read (bmp_img *img, const char *filename)
 {
 	int y;
+	long seek_offset;
 	FILE *img_file;
 	
 	img_file = fopen (filename, "rb");
@@ -187,13 +188,21 @@ int bmp_img_read (bmp_img *img, const char *filename)
 	bmp_img_alloc (img);
 	
 	// TODO: Implement a way to read backwards to be compatible with negative values for biHeight!
-	for (y = 0; y < img->img_header.biWidth; y++)
+	seek_offset = sizeof (unsigned char) * BMP_GET_PADDING (img->img_header.biWidth);
+	
+	if (img->img_header.biHeight < 0)
+	{
+		seek_offset = -seek_offset - (sizeof (bmp_pixel) * img->img_header.biWidth * -2);
+		fseek (img_file, seek_offset, SEEK_END);
+	}
+	
+	for (y = 0; y < img->img_header.biWidth; y += (img->img_header.biHeight < 0 ? -1 : 1))
 	{
 		/* Read a whole row of pixels from the file: */
 		fread (img->img_pixels[y], sizeof (bmp_pixel) * img->img_header.biWidth, 1, img_file);
 		
 		/* Skip the padding: */
-		fseek (img_file, sizeof (unsigned char) * BMP_GET_PADDING (img->img_header.biWidth), SEEK_CUR);
+		fseek (img_file, seek_offset, SEEK_CUR);
 	}
 	
 	fclose (img_file);
