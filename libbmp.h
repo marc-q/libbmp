@@ -51,7 +51,7 @@ int bmp_header_read (bmp_header*, FILE*);
 void bmp_pixel_init (bmp_pixel*, const unsigned char, const unsigned char, const unsigned char);
 
 /* BMP_IMG */
-void bmp_img_init (bmp_img*, const int, const int);
+void bmp_img_alloc (bmp_img*);
 void bmp_img_init_df (bmp_img*, const int, const int);
 void bmp_img_free (bmp_img*);
 int bmp_img_write (const bmp_img*, const char*);
