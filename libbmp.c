@@ -85,16 +85,16 @@ void bmp_pixel_init (bmp_pixel *pxl, const unsigned char red, const unsigned cha
 
 /* BMP_IMG */
 
-void bmp_img_init (bmp_img *img, const int width, const int height)
+void bmp_img_alloc (bmp_img *img)
 {
 	int y;
 	
 	/* Allocate the required memory for the pixels: */
-	img->img_pixels = (bmp_pixel**) malloc (sizeof (bmp_pixel*) * height);
+	img->img_pixels = (bmp_pixel**) malloc (sizeof (bmp_pixel*) * img->img_header.biHeight);
 	
-	for (y = 0; y < height; y++)
+	for (y = 0; y < img->img_header.biHeight; y++)
 	{
-		img->img_pixels[y] = (bmp_pixel*) malloc (sizeof (bmp_pixel) * width);
+		img->img_pixels[y] = (bmp_pixel*) malloc (sizeof (bmp_pixel) * img->img_header.biWidth);
 	}
 }
 
@@ -103,7 +103,7 @@ void bmp_img_init_df (bmp_img *img, const int width, const int height)
 	/* INIT the header with default values: */
 	bmp_header_init_df (&img->img_header, width, height);
 	/* INIT the img: */
-	bmp_img_init (img, width, height);
+	bmp_img_alloc (img);
 }
 
 void bmp_img_free (bmp_img *img)
@@ -176,7 +176,7 @@ int bmp_img_read (bmp_img *img, const char *filename)
 		return -2;
 	}
 	
-	bmp_img_init (img, img->img_header.biWidth, img->img_header.biHeight);
+	bmp_img_alloc (img);
 	
 	// TODO: Implement a way to read backwards to be compatible with negative values for biHeight!
 	for (y = 0; y < img->img_header.biWidth; y++)
