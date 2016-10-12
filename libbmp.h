@@ -5,6 +5,14 @@
 
 #define BMP_GET_PADDING(a) ((a) % 4)
 
+enum
+{
+	BMP_FILE_NOT_OPENED = -3,
+	BMP_HEADER_NOT_INITIALIZED,
+	BMP_INVALID_FILE,
+	BMP_OK = 0
+};
+
 struct _bmp_header
 {
 	unsigned int bfSize;
