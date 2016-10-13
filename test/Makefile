@@ -13,3 +13,5 @@ test: $(OBJECTS)
 
 clean:
 	rm $(NAME)
+	rm "test.bmp"
+	rm "test2.bmp"
