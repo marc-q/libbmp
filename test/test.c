@@ -4,17 +4,17 @@
 #include <stdlib.h>
 #include "../libbmp.h"
 
-static void bmp_test_write (void)
+static void bmp_test_write (int width, int height)
 {
 	int x, y;
 	bmp_img img;
 	
-	bmp_img_init_df (&img, 512, -512);
+	bmp_img_init_df (&img, width, -height);
 
 	/* Draw a checkerboard pattern: */
-	for (y = 0; y < 512; y++)
+	for (y = 0; y < height; y++)
 	{	
-		for (x = 0; x < 512; x++)
+		for (x = 0; x < width; x++)
 		{
 			if ((y % 128 < 64 && x % 128 < 64) ||
 			    (y % 128 >= 64 && x % 128 >= 64))
@@ -59,10 +59,15 @@ static void bmp_test_read (void)
 
 int main (int argc, char *argv[])
 {
+	int i;
+	
 	printf ("LibBMP-Test v. 0.0.1 A (C) 2016 Marc Volker Dickmann\n\n");
 	
-	bmp_test_write ();
-	bmp_test_read ();
+	for (i = 0; i < 4; i++)
+	{
+		bmp_test_write (512 + i, 512);
+		bmp_test_read ();
+	}
 	
 	return 0;
 }
