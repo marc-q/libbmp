@@ -2,6 +2,7 @@
 /* Project: LibBMP */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "libbmp.h"
 
 /* BMP_HEADER */
@@ -119,8 +120,8 @@ void bmp_img_free (bmp_img *img)
 
 int bmp_img_write (const bmp_img *img, const char *filename)
 {
-	int x, y, offset;
-	unsigned char padding;
+	int y, offset;
+	unsigned char padding[3];
 	FILE *img_file;
 	
 	img_file = fopen (filename, "wb");
@@ -150,18 +151,15 @@ int bmp_img_write (const bmp_img *img, const char *filename)
 	}
 	
 	/* Write the content: */
-	padding = '\0';
+	memset (padding, '\0', sizeof (unsigned char) * 3);
 	
 	for (y = 0; y < abs (img->img_header.biHeight); y++)
 	{
 		/* Write a whole row of pixels to the file: */
-		fwrite (img->img_pixels[abs (y - offset)], sizeof (bmp_pixel) * img->img_header.biWidth, 1, img_file);
+		fwrite (img->img_pixels[abs (y - offset)], sizeof (bmp_pixel), img->img_header.biWidth, img_file);
 		
 		/* Write the padding for the row! */
-		for (x = 0; x < BMP_GET_PADDING (img->img_header.biWidth); x++)
-		{
-			fwrite (&padding, sizeof (padding), 1, img_file);
-		}
+		fwrite (padding, sizeof (unsigned char), BMP_GET_PADDING (img->img_header.biWidth), img_file);
 	}
 	
 	/* NOTE: All good! */
@@ -208,7 +206,7 @@ int bmp_img_read (bmp_img *img, const char *filename)
 	for (y = 0; y < abs (img->img_header.biHeight); y++)
 	{
 		/* Read a whole row of pixels from the file: */
-		fread (img->img_pixels[y], sizeof (bmp_pixel) * img->img_header.biWidth, 1, img_file);
+		fread (img->img_pixels[y], sizeof (bmp_pixel), img->img_header.biWidth, img_file);
 		
 		/* Skip the padding: */
 		fseek (img_file, seek_offset, SEEK_CUR);
