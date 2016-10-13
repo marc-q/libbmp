@@ -9,7 +9,7 @@
 void bmp_header_init_df (bmp_header *header, const int width, const int height)
 {
 	/* Init a bmp_header with the default values. */
-	header->bfSize = (sizeof (bmp_pixel) * width * height) + (sizeof (unsigned char) * BMP_GET_PADDING (width) * height);
+	header->bfSize = (sizeof (bmp_pixel) * width * abs (height)) + (sizeof (unsigned char) * BMP_GET_PADDING (width) * abs (height));
 	header->bfReserved = 0;
 	header->bfOffBits = 54;
 	header->biSize = 40;
@@ -90,9 +90,9 @@ void bmp_img_alloc (bmp_img *img)
 	int y;
 	
 	/* Allocate the required memory for the pixels: */
-	img->img_pixels = (bmp_pixel**) malloc (sizeof (bmp_pixel*) * img->img_header.biHeight);
+	img->img_pixels = (bmp_pixel**) malloc (sizeof (bmp_pixel*) * abs (img->img_header.biHeight));
 	
-	for (y = 0; y < img->img_header.biHeight; y++)
+	for (y = 0; y < abs (img->img_header.biHeight); y++)
 	{
 		img->img_pixels[y] = (bmp_pixel*) malloc (sizeof (bmp_pixel) * img->img_header.biWidth);
 	}
@@ -110,7 +110,7 @@ void bmp_img_free (bmp_img *img)
 {
 	int y;
 	
-	for (y = 0; y < img->img_header.biHeight; y++)
+	for (y = 0; y < abs (img->img_header.biHeight); y++)
 	{
 		free (img->img_pixels[y]);
 	}
@@ -119,7 +119,7 @@ void bmp_img_free (bmp_img *img)
 
 int bmp_img_write (const bmp_img *img, const char *filename)
 {
-	int x, y;
+	int x, y, offset;
 	unsigned char padding;
 	FILE *img_file;
 	
@@ -141,13 +141,21 @@ int bmp_img_write (const bmp_img *img, const char *filename)
 		return y;
 	}
 	
+	/* Select the mode (bottom-up or top-down): */
+	offset = 0;
+	
+	if (img->img_header.biHeight > 0)
+	{
+		offset = abs (img->img_header.biHeight) - 1;
+	}
+	
 	/* Write the content: */
 	padding = '\0';
 	
-	for (y = 0; y < img->img_header.biHeight; y++)
+	for (y = 0; y < abs (img->img_header.biHeight); y++)
 	{
 		/* Write a whole row of pixels to the file: */
-		fwrite (img->img_pixels[y], sizeof (bmp_pixel) * img->img_header.biWidth, 1, img_file);
+		fwrite (img->img_pixels[abs (y - offset)], sizeof (bmp_pixel) * img->img_header.biWidth, 1, img_file);
 		
 		/* Write the padding for the row! */
 		for (x = 0; x < BMP_GET_PADDING (img->img_header.biWidth); x++)
@@ -164,6 +172,7 @@ int bmp_img_write (const bmp_img *img, const char *filename)
 int bmp_img_read (bmp_img *img, const char *filename)
 {
 	int y;
+	long seek_offset;
 	FILE *img_file;
 	
 	img_file = fopen (filename, "rb");
@@ -186,16 +195,26 @@ int bmp_img_read (bmp_img *img, const char *filename)
 	
 	bmp_img_alloc (img);
 	
-	// TODO: Implement a way to read backwards to be compatible with negative values for biHeight!
-	for (y = 0; y < img->img_header.biWidth; y++)
+	/* Select the mode (bottom-up or top-down): */
+	seek_offset = sizeof (unsigned char) * BMP_GET_PADDING (img->img_header.biWidth);
+	
+	if (img->img_header.biHeight > 0)
+	{
+		seek_offset = (sizeof (bmp_pixel) * img->img_header.biWidth * -2) - seek_offset;
+		fseek (img_file, seek_offset, SEEK_END);
+	}
+	
+	/* Read the content: */
+	for (y = 0; y < abs (img->img_header.biHeight); y++)
 	{
 		/* Read a whole row of pixels from the file: */
 		fread (img->img_pixels[y], sizeof (bmp_pixel) * img->img_header.biWidth, 1, img_file);
 		
 		/* Skip the padding: */
-		fseek (img_file, sizeof (unsigned char) * BMP_GET_PADDING (img->img_header.biWidth), SEEK_CUR);
+		fseek (img_file, seek_offset, SEEK_CUR);
 	}
 	
+	/* NOTE: All good! */
 	fclose (img_file);
 	return BMP_OK;
 }
