@@ -192,11 +192,11 @@ int bmp_img_read (bmp_img *img, const char *filename)
 	
 	if (img->img_header.biHeight < 0)
 	{
-		seek_offset = -seek_offset - (sizeof (bmp_pixel) * img->img_header.biWidth * -2);
+		seek_offset = -seek_offset - (sizeof (bmp_pixel) * img->img_header.biWidth * 2);
 		fseek (img_file, seek_offset, SEEK_END);
 	}
 	
-	for (y = 0; y < img->img_header.biWidth; y += (img->img_header.biHeight < 0 ? -1 : 1))
+	for (y = 0; y < img->img_header.biWidth; y++)
 	{
 		/* Read a whole row of pixels from the file: */
 		fread (img->img_pixels[y], sizeof (bmp_pixel) * img->img_header.biWidth, 1, img_file);
