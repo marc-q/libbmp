@@ -1,73 +1,61 @@
 /* Copyright 2016 Marc Volker Dickmann */
 /* Project: LibBMP */
 #include <stdio.h>
-#include <stdlib.h>
 #include "../libbmp.h"
 
-static void bmp_test_write (int width, int height)
-{
-	int x, y;
-	bmp_img img;
-	
-	bmp_img_init_df (&img, width, -height);
+#define BMP_TEST_PASSED 1
+#define BMP_TEST_FAILED 0
 
-	/* Draw a checkerboard pattern: */
-	for (y = 0; y < height; y++)
-	{	
-		for (x = 0; x < width; x++)
-		{
-			if ((y % 128 < 64 && x % 128 < 64) ||
-			    (y % 128 >= 64 && x % 128 >= 64))
-			{
-				bmp_pixel_init (&img.img_pixels[y][x], 250, 250, 250);
-			}
-			else
-			{
-				bmp_pixel_init (&img.img_pixels[y][x], 0, 0, 0);
-			}
-		}
-	}
-	
-	bmp_img_write (&img, "test.bmp");
-	bmp_img_free (&img);
+/* Utils */
+
+static void bmp_test_print_summary (const int points, const int points_max)
+{
+	printf ("\n\nPoints\t%i/%i\n", points, points_max);
+	printf ("Failed\t%i\n", points_max - points);
 }
 
-static void bmp_test_read (void)
+static void bmp_test_print_passed (const char *name)
 {
-	int x, y;
-	bmp_img img;
-	
-	bmp_img_read (&img, "test.bmp");
-	img.img_header.biHeight = abs (img.img_header.biHeight);
-	
-	for (y = 0; y < img.img_header.biHeight; y++)
+	printf ("%s\t\tPASSED!\n", name);
+}
+
+static void bmp_test_print_failed (const char *name)
+{
+	printf ("%s\t\tFAILED!\n", name);
+}
+
+/* MACROS */
+
+static int bmp_test_get_padding (void)
+{
+	if (BMP_GET_PADDING (1) == 3 &&
+	    BMP_GET_PADDING (2) == 2 &&
+	    BMP_GET_PADDING (3) == 1 &&
+	    BMP_GET_PADDING (4) == 0 &&
+	    BMP_GET_PADDING (5) == 3 &&
+	    BMP_GET_PADDING (6) == 2 &&
+	    BMP_GET_PADDING (7) == 1 &&
+	    BMP_GET_PADDING (8) == 0)
 	{
-		for (x = 0; x < img.img_header.biWidth; x++)
-		{
-			if (img.img_pixels[y][x].red == 250 &&
-			    img.img_pixels[y][x].green == 250 &&
-			    img.img_pixels[y][x].blue == 250)
-			{
-				bmp_pixel_init (&img.img_pixels[y][x], 250, 120, 120);
-			}
-		}
+		bmp_test_print_passed ("BMP_GET_PADDING");
+		return BMP_TEST_PASSED;
 	}
 	
-	bmp_img_write (&img, "test2.bmp");
-	bmp_img_free (&img);
+	bmp_test_print_failed ("BMP_GET_PADDING");
+	return BMP_TEST_FAILED;
 }
 
 int main (int argc, char *argv[])
 {
-	int i;
+	int points;
+	
+	points = 0;
 	
 	printf ("LibBMP-Test v. 0.0.1 A (C) 2016 Marc Volker Dickmann\n\n");
 	
-	for (i = 0; i < 4; i++)
-	{
-		bmp_test_write (512 + i, 512);
-		bmp_test_read ();
-	}
+	points += bmp_test_get_padding ();
+	
+	bmp_test_print_summary (points, 1);
 	
 	return 0;
 }
