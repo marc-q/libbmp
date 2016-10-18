@@ -156,7 +156,7 @@ int bmp_img_write (const bmp_img *img, const char *filename)
 	for (y = 0; y < abs (img->img_header.biHeight); y++)
 	{
 		/* Write a whole row of pixels to the file: */
-		fwrite (img->img_pixels[abs (y - offset)], sizeof (bmp_pixel), img->img_header.biWidth, img_file);
+		fwrite (img->img_pixels[abs (offset - y)], sizeof (bmp_pixel), img->img_header.biWidth, img_file);
 		
 		/* Write the padding for the row! */
 		fwrite (padding, sizeof (unsigned char), BMP_GET_PADDING (img->img_header.biWidth), img_file);
