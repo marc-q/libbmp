@@ -28,13 +28,13 @@ static void bmp_test_print_failed (const char *name)
 
 static int bmp_test_get_padding (void)
 {
-	if (BMP_GET_PADDING (1) == 3 &&
+	if (BMP_GET_PADDING (1) == 1 &&
 	    BMP_GET_PADDING (2) == 2 &&
-	    BMP_GET_PADDING (3) == 1 &&
+	    BMP_GET_PADDING (3) == 3 &&
 	    BMP_GET_PADDING (4) == 0 &&
-	    BMP_GET_PADDING (5) == 3 &&
+	    BMP_GET_PADDING (5) == 1 &&
 	    BMP_GET_PADDING (6) == 2 &&
-	    BMP_GET_PADDING (7) == 1 &&
+	    BMP_GET_PADDING (7) == 3 &&
 	    BMP_GET_PADDING (8) == 0)
 	{
 		bmp_test_print_passed ("BMP_GET_PADDING");
