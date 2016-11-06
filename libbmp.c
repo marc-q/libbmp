@@ -198,8 +198,9 @@ int bmp_img_read (bmp_img *img, const char *filename)
 	
 	if (img->img_header.biHeight > 0)
 	{
+		/* For the first row it seek's one row from the SEEK_END. */
+		fseek (img_file, (sizeof (bmp_pixel) * img->img_header.biWidth * -1) - seek_offset, SEEK_END);
 		seek_offset = (sizeof (bmp_pixel) * img->img_header.biWidth * -2) - seek_offset;
-		fseek (img_file, seek_offset, SEEK_END);
 	}
 	
 	/* Read the content: */
