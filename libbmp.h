@@ -3,7 +3,7 @@
 
 #define BMP_MAGIC 19778
 
-#define BMP_GET_PADDING(a) ((a) % 4 == 0 ? 0 : 4 - ((a) % 4))
+#define BMP_GET_PADDING(a) ((a) % 4)
 
 enum
 {
