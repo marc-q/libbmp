@@ -1,4 +1,4 @@
-/* Copyright 2016 Marc Volker Dickmann */
+/* Copyright 2016 - 2017 Marc Volker Dickmann */
 /* Project: LibBMP */
 #include <stdio.h>
 #include "../libbmp.h"
@@ -94,7 +94,7 @@ int main (int argc, char *argv[])
 	
 	points = 0;
 	
-	printf ("LibBMP-Test v. 0.0.1 A (C) 2016 Marc Volker Dickmann\n\n");
+	printf ("LibBMP-Test v. 0.0.1 A (C) 2016 - 2017 Marc Volker Dickmann\n\n");
 	
 	points += bmp_test_get_padding ();
 	
