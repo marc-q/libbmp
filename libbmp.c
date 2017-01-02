@@ -63,14 +63,14 @@ enum bmp_error bmp_header_read (bmp_header *header, FILE *img_file)
 	}
 	
 	/* Check if its an bmp file by comparing the magic nbr: */
-	if (fread (&magic, sizeof (magic), 1, img_file) == sizeof (magic) &&
+	if (fread (&magic, sizeof (magic), 1, img_file) > 0 &&
 	    magic != BMP_MAGIC)
 	{
 		/* ERROR: Not an BMP file! */
 		return BMP_INVALID_FILE;
 	}
 	
-	if (fread (header, sizeof (bmp_header), 1, img_file) != sizeof (bmp_header))
+	if (fread (header, sizeof (bmp_header), 1, img_file) == 0)
 	{
 		return BMP_ERROR;
 	}
@@ -210,7 +210,7 @@ enum bmp_error bmp_img_read (bmp_img *img, const char *filename)
 	for (y = 0; y < abs (img->img_header.biHeight); y++)
 	{
 		/* Read a whole row of pixels from the file: */
-		if (fread (img->img_pixels[y], sizeof (bmp_pixel), img->img_header.biWidth, img_file) != sizeof (bmp_pixel))
+		if (fread (img->img_pixels[y], sizeof (bmp_pixel), img->img_header.biWidth, img_file) == 0)
 		{
 			fclose (img_file);
 			return BMP_ERROR;
