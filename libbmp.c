@@ -26,7 +26,7 @@ void bmp_header_init_df (bmp_header *header, const int width, const int height)
 	header->biClrImportant = 0;
 }
 
-int bmp_header_write (const bmp_header *header, FILE *img_file)
+enum bmp_error bmp_header_write (const bmp_header *header, FILE *img_file)
 {
 	unsigned short magic;
 	
@@ -52,7 +52,7 @@ int bmp_header_write (const bmp_header *header, FILE *img_file)
 	return BMP_OK;
 }
 
-int bmp_header_read (bmp_header *header, FILE *img_file)
+enum bmp_error bmp_header_read (bmp_header *header, FILE *img_file)
 {
 	unsigned short magic;
 	
@@ -63,15 +63,18 @@ int bmp_header_read (bmp_header *header, FILE *img_file)
 	}
 	
 	/* Check if its an bmp file by comparing the magic nbr: */
-	fread (&magic, sizeof (magic), 1, img_file);
-	
-	if (magic != BMP_MAGIC)
+	if (fread (&magic, sizeof (magic), 1, img_file) == sizeof (magic) &&
+	    magic != BMP_MAGIC)
 	{
 		/* ERROR: Not an BMP file! */
 		return BMP_INVALID_FILE;
 	}
 	
-	fread (header, sizeof (bmp_header), 1, img_file);
+	if (fread (header, sizeof (bmp_header), 1, img_file) != sizeof (bmp_header))
+	{
+		return BMP_ERROR;
+	}
+	
 	return BMP_OK;
 }
 
@@ -118,7 +121,7 @@ void bmp_img_free (bmp_img *img)
 	free (img->img_pixels);
 }
 
-int bmp_img_write (const bmp_img *img, const char *filename)
+enum bmp_error bmp_img_write (const bmp_img *img, const char *filename)
 {
 	int y, offset;
 	unsigned char padding[3];
@@ -167,7 +170,7 @@ int bmp_img_write (const bmp_img *img, const char *filename)
 	return BMP_OK;
 }
 
-int bmp_img_read (bmp_img *img, const char *filename)
+enum bmp_error bmp_img_read (bmp_img *img, const char *filename)
 {
 	int y;
 	long seek_offset;
@@ -207,7 +210,11 @@ int bmp_img_read (bmp_img *img, const char *filename)
 	for (y = 0; y < abs (img->img_header.biHeight); y++)
 	{
 		/* Read a whole row of pixels from the file: */
-		fread (img->img_pixels[y], sizeof (bmp_pixel), img->img_header.biWidth, img_file);
+		if (fread (img->img_pixels[y], sizeof (bmp_pixel), img->img_header.biWidth, img_file) != sizeof (bmp_pixel))
+		{
+			fclose (img_file);
+			return BMP_ERROR;
+		}
 		
 		/* Skip the padding: */
 		fseek (img_file, seek_offset, SEEK_CUR);

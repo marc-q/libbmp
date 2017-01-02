@@ -6,10 +6,7 @@ BINDIR = $(DESTDIR)/usr/bin
 NAME = test
 
 test: $(OBJECTS)
-	$(CC) -o $(NAME) $(OBJECTS) $(LIBS)
-
-%.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJECTS) $(LIBS)
 
 clean:
 	rm $(NAME)
