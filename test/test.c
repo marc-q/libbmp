@@ -88,6 +88,26 @@ static int bmp_test_header_init_df (void)
 	return BMP_TEST_FAILED;
 }
 
+/* Pixel */
+
+static int bmp_test_pixel_init (void)
+{
+	bmp_pixel pxl;
+	
+	bmp_pixel_init (&pxl, 1, 250, 4);
+	
+	if (pxl.red != 1 ||
+	    pxl.green != 250 ||
+	    pxl.blue != 4)
+	{
+		bmp_test_print_failed ("pixel_init");
+		return BMP_TEST_FAILED;
+	}
+	
+	bmp_test_print_passed ("pixel_init");
+	return BMP_TEST_PASSED;
+}
+
 int main (int argc, char *argv[])
 {
 	int points;
@@ -100,6 +120,8 @@ int main (int argc, char *argv[])
 	
 	points += bmp_test_header_init_df ();
 	
-	bmp_test_print_summary (points, 2);
+	points += bmp_test_pixel_init ();
+	
+	bmp_test_print_summary (points, 3);
 	return 0;
 }
