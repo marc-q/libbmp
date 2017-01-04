@@ -47,6 +47,19 @@ static int bmp_test_get_padding (void)
 
 /* Header */
 
+static int bmp_test_header_size (void)
+{
+	// Note: Its 52 Bytes because the header doesn't include the magic field!
+	if (sizeof (bmp_header) == 52)
+	{
+		bmp_test_print_passed ("header_size");
+		return BMP_TEST_PASSED;
+	}
+	
+	bmp_test_print_failed ("header_size");
+	return BMP_TEST_FAILED;
+}
+
 static int bmp_test_header_init_df (void)
 {
 	int r;
@@ -118,10 +131,11 @@ int main (int argc, char *argv[])
 	
 	points += bmp_test_get_padding ();
 	
+	points += bmp_test_header_size ();
 	points += bmp_test_header_init_df ();
 	
 	points += bmp_test_pixel_init ();
 	
-	bmp_test_print_summary (points, 3);
+	bmp_test_print_summary (points, 4);
 	return 0;
 }
