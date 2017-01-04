@@ -104,16 +104,16 @@ static int bmp_test_pixel_init (void)
 	
 	bmp_pixel_init (&pxl, 1, 250, 4);
 	
-	if (pxl.red != 1 ||
-	    pxl.green != 250 ||
-	    pxl.blue != 4)
+	if (pxl.red == 1 &&
+	    pxl.green == 250 &&
+	    pxl.blue == 4)
 	{
-		bmp_test_print_failed ("pixel_init");
-		return BMP_TEST_FAILED;
+		bmp_test_print_passed ("pixel_init");
+		return BMP_TEST_PASSED;
 	}
 	
-	bmp_test_print_passed ("pixel_init");
-	return BMP_TEST_PASSED;
+	bmp_test_print_failed ("pixel_init");
+	return BMP_TEST_FAILED;
 }
 
 int main (int argc, char *argv[])
