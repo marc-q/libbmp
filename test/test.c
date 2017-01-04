@@ -79,12 +79,12 @@ static int bmp_test_header_init_df (void)
 		r = BMP_TEST_FAILED;
 	}
 	
-	/* Test negative height value: */
-	bmp_header_init_df (&header, 100, -100);
+	/* Test negative height value with padding: */
+	bmp_header_init_df (&header, 102, -100);
 	
 	if (r == BMP_TEST_PASSED &&
-	    (header.bfSize != (sizeof (bmp_pixel) * 10000) ||
-	     header.biWidth != 100 ||
+	    (header.bfSize != (sizeof (bmp_pixel) * 10200) + 200 ||
+	     header.biWidth != 102 ||
 	     header.biHeight != -100))
 	{
 		r = BMP_TEST_FAILED;
