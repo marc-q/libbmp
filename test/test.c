@@ -62,36 +62,31 @@ static int bmp_test_header_size (void)
 
 static int bmp_test_header_init_df (void)
 {
-	int r;
+	int passed = BMP_TEST_PASSED;
 	bmp_header header;
 	
 	/* Test positive height value: */
 	bmp_header_init_df (&header, 100, 100);
 	
-	if (header.bfSize == (sizeof (bmp_pixel) * 10000) &&
-	    header.biWidth == 100 &&
-	    header.biHeight == 100)
+	if (header.bfSize != (sizeof (bmp_pixel) * 10000) ||
+	    header.biWidth != 100 ||
+	    header.biHeight != 100)
 	{
-		r = BMP_TEST_PASSED;
-	}
-	else
-	{
-		r = BMP_TEST_FAILED;
+		passed = BMP_TEST_FAILED;
 	}
 	
 	/* Test negative height value with padding: */
 	bmp_header_init_df (&header, 102, -100);
 	
-	if (r == BMP_TEST_PASSED &&
-	    (header.bfSize != (sizeof (bmp_pixel) * 10200) + 200 ||
+	if (header.bfSize != (sizeof (bmp_pixel) * 10200) + 200 ||
 	     header.biWidth != 102 ||
-	     header.biHeight != -100))
+	     header.biHeight != -100)
 	{
-		r = BMP_TEST_FAILED;
+		passed = BMP_TEST_FAILED;
 	}
 	
 	/* Return the result: */
-	if (r == BMP_TEST_PASSED)
+	if (passed == BMP_TEST_PASSED)
 	{
 		bmp_test_print_passed ("header_init_df");
 		return BMP_TEST_PASSED;
