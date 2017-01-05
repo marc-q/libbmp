@@ -155,7 +155,7 @@ enum bmp_error bmp_img_write (const bmp_img *img, const char *filename)
 	}
 	
 	/* Write the content: */
-	memset (padding, '\0', sizeof (unsigned char) * 3);
+	memset (padding, '\0', sizeof (padding));
 	
 	for (y = 0; y < h; y++)
 	{
