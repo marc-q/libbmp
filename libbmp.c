@@ -91,12 +91,12 @@ void bmp_pixel_init (bmp_pixel *pxl, const unsigned char red, const unsigned cha
 
 void bmp_img_alloc (bmp_img *img)
 {
-	int y, h = abs (img->img_header.biHeight);
+	size_t h = abs (img->img_header.biHeight);
 	
 	/* Allocate the required memory for the pixels: */
 	img->img_pixels = malloc (sizeof (bmp_pixel*) * h);
 	
-	for (y = 0; y < h; y++)
+	for (size_t y = 0; y < h; y++)
 	{
 		img->img_pixels[y] = malloc (sizeof (bmp_pixel) * img->img_header.biWidth);
 	}
@@ -112,9 +112,9 @@ void bmp_img_init_df (bmp_img *img, const int width, const int height)
 
 void bmp_img_free (bmp_img *img)
 {
-	int y, h = abs (img->img_header.biHeight);
+	size_t h = abs (img->img_header.biHeight);
 	
-	for (y = 0; y < h; y++)
+	for (size_t y = 0; y < h; y++)
 	{
 		free (img->img_pixels[y]);
 	}
@@ -123,7 +123,7 @@ void bmp_img_free (bmp_img *img)
 
 enum bmp_error bmp_img_write (const bmp_img *img, const char *filename)
 {
-	int y, offset, h;
+	size_t offset = 0, h;
 	unsigned char padding[3];
 	FILE *img_file;
 	
@@ -136,18 +136,17 @@ enum bmp_error bmp_img_write (const bmp_img *img, const char *filename)
 	}
 	
 	/* NOTE: This way the correct error code could be returned. */
-	y = bmp_header_write (&img->img_header, img_file);
+	h = bmp_header_write (&img->img_header, img_file);
 	
-	if (y != BMP_OK)
+	if (h != BMP_OK)
 	{
 		/* ERROR: Could'nt write the header! */
 		fclose (img_file);
-		return y;
+		return h;
 	}
 	
 	/* Select the mode (bottom-up or top-down): */
 	h = abs (img->img_header.biHeight);
-	offset = 0;
 	
 	if (img->img_header.biHeight > 0)
 	{
@@ -157,7 +156,7 @@ enum bmp_error bmp_img_write (const bmp_img *img, const char *filename)
 	/* Write the content: */
 	memset (padding, '\0', sizeof (padding));
 	
-	for (y = 0; y < h; y++)
+	for (size_t y = 0; y < h; y++)
 	{
 		/* Write a whole row of pixels to the file: */
 		fwrite (img->img_pixels[abs (offset - y)], sizeof (bmp_pixel), img->img_header.biWidth, img_file);
@@ -173,7 +172,7 @@ enum bmp_error bmp_img_write (const bmp_img *img, const char *filename)
 
 enum bmp_error bmp_img_read (bmp_img *img, const char *filename)
 {
-	int y, h;
+	size_t h;
 	long seek_offset;
 	FILE *img_file;
 	
@@ -186,13 +185,13 @@ enum bmp_error bmp_img_read (bmp_img *img, const char *filename)
 	}
 	
 	/* NOTE: This way the correct error code could be returned. */
-	y = bmp_header_read (&img->img_header, img_file);
+	h = bmp_header_read (&img->img_header, img_file);
 	
-	if (y != BMP_OK)
+	if (h != BMP_OK)
 	{
 		/* ERROR: Could'nt read the image header! */
 		fclose (img_file);
-		return y;
+		return h;
 	}
 	
 	bmp_img_alloc (img);
@@ -209,7 +208,7 @@ enum bmp_error bmp_img_read (bmp_img *img, const char *filename)
 	
 	/* Read the content: */
 	h = abs (img->img_header.biHeight);
-	for (y = 0; y < h; y++)
+	for (size_t y = 0; y < h; y++)
 	{
 		/* Read a whole row of pixels from the file: */
 		if (fread (img->img_pixels[y], sizeof (bmp_pixel), img->img_header.biWidth, img_file) == 0)
