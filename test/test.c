@@ -8,25 +8,29 @@
 
 /* Utils */
 
-static void bmp_test_print_summary (const int points, const int points_max)
+static void
+bmp_test_print_summary (const int points, const int points_max)
 {
 	printf ("\n\nPoints\t%i/%i\n", points, points_max);
 	printf ("Failed\t%i\n", points_max - points);
 }
 
-static void bmp_test_print_passed (const char *name)
+static void
+bmp_test_print_passed (const char *name)
 {
 	printf ("%s\t\tPASSED!\n", name);
 }
 
-static void bmp_test_print_failed (const char *name)
+static void
+bmp_test_print_failed (const char *name)
 {
 	printf ("%s\t\tFAILED!\n", name);
 }
 
 /* MACROS */
 
-static int bmp_test_get_padding (void)
+static int
+bmp_test_get_padding (void)
 {
 	if (BMP_GET_PADDING (1) == 1 &&
 	    BMP_GET_PADDING (2) == 2 &&
@@ -47,7 +51,8 @@ static int bmp_test_get_padding (void)
 
 /* Header */
 
-static int bmp_test_header_size (void)
+static int
+bmp_test_header_size (void)
 {
 	// Note: Its 52 Bytes because the header doesn't include the magic field!
 	if (sizeof (bmp_header) == 52)
@@ -60,7 +65,8 @@ static int bmp_test_header_size (void)
 	return BMP_TEST_FAILED;
 }
 
-static int bmp_test_header_init_df (void)
+static int
+bmp_test_header_init_df (void)
 {
 	int passed = BMP_TEST_PASSED;
 	bmp_header header;
@@ -98,7 +104,8 @@ static int bmp_test_header_init_df (void)
 
 /* Pixel */
 
-static int bmp_test_pixel_init (void)
+static int
+bmp_test_pixel_init (void)
 {
 	bmp_pixel pxl;
 	
@@ -116,11 +123,10 @@ static int bmp_test_pixel_init (void)
 	return BMP_TEST_FAILED;
 }
 
-int main (int argc, char *argv[])
+int
+main (int argc, char *argv[])
 {
-	int points;
-	
-	points = 0;
+	int points = 0;
 	
 	printf ("LibBMP-Test v. 0.0.1 A (C) 2016 - 2017 Marc Volker Dickmann\n\n");
 	

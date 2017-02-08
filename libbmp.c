@@ -7,7 +7,8 @@
 
 /* BMP_HEADER */
 
-void bmp_header_init_df (bmp_header *header, const int width, const int height)
+void
+bmp_header_init_df (bmp_header *header, const int width, const int height)
 {
 	/* Init a bmp_header with the default values. */
 	header->bfSize = (sizeof (bmp_pixel) * width + sizeof (unsigned char) * BMP_GET_PADDING (width)) * abs (height);
@@ -26,7 +27,8 @@ void bmp_header_init_df (bmp_header *header, const int width, const int height)
 	header->biClrImportant = 0;
 }
 
-enum bmp_error bmp_header_write (const bmp_header *header, FILE *img_file)
+enum bmp_error
+bmp_header_write (const bmp_header *header, FILE *img_file)
 {
 	unsigned short magic;
 	
@@ -52,7 +54,8 @@ enum bmp_error bmp_header_write (const bmp_header *header, FILE *img_file)
 	return BMP_OK;
 }
 
-enum bmp_error bmp_header_read (bmp_header *header, FILE *img_file)
+enum bmp_error
+bmp_header_read (bmp_header *header, FILE *img_file)
 {
 	unsigned short magic;
 	
@@ -80,7 +83,8 @@ enum bmp_error bmp_header_read (bmp_header *header, FILE *img_file)
 
 /* BMP_PIXEL */
 
-void bmp_pixel_init (bmp_pixel *pxl, const unsigned char red, const unsigned char green, const unsigned char blue)
+void
+bmp_pixel_init (bmp_pixel *pxl, const unsigned char red, const unsigned char green, const unsigned char blue)
 {
 	pxl->red = red;
 	pxl->green = green;
@@ -89,7 +93,8 @@ void bmp_pixel_init (bmp_pixel *pxl, const unsigned char red, const unsigned cha
 
 /* BMP_IMG */
 
-void bmp_img_alloc (bmp_img *img)
+void
+bmp_img_alloc (bmp_img *img)
 {
 	size_t h = abs (img->img_header.biHeight);
 	
@@ -102,7 +107,8 @@ void bmp_img_alloc (bmp_img *img)
 	}
 }
 
-void bmp_img_init_df (bmp_img *img, const int width, const int height)
+void
+bmp_img_init_df (bmp_img *img, const int width, const int height)
 {
 	/* INIT the header with default values: */
 	bmp_header_init_df (&img->img_header, width, height);
@@ -110,7 +116,8 @@ void bmp_img_init_df (bmp_img *img, const int width, const int height)
 	bmp_img_alloc (img);
 }
 
-void bmp_img_free (bmp_img *img)
+void
+bmp_img_free (bmp_img *img)
 {
 	size_t h = abs (img->img_header.biHeight);
 	
@@ -121,7 +128,8 @@ void bmp_img_free (bmp_img *img)
 	free (img->img_pixels);
 }
 
-enum bmp_error bmp_img_write (const bmp_img *img, const char *filename)
+enum bmp_error
+bmp_img_write (const bmp_img *img, const char *filename)
 {
 	size_t offset = 0, h;
 	unsigned char padding[3];
@@ -170,7 +178,8 @@ enum bmp_error bmp_img_write (const bmp_img *img, const char *filename)
 	return BMP_OK;
 }
 
-enum bmp_error bmp_img_read (bmp_img *img, const char *filename)
+enum bmp_error
+bmp_img_read (bmp_img *img, const char *filename)
 {
 	size_t h;
 	long seek_offset;

@@ -6,7 +6,8 @@ A simple Bitmap (BMP) library written in pure C.
 #include <stdio.h>
 #include "libbmp.h"
 
-int main (int argc, char *argv[])
+int
+main (int argc, char *argv[])
 {
 	int x, y;
 	bmp_img img;
