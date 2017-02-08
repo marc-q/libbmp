@@ -42,7 +42,7 @@ bmp_header_write (const bmp_header *header, FILE *img_file)
 		return BMP_FILE_NOT_OPENED;
 	}
 	
-	const unsigned magic = BMP_MAGIC;
+	const unsigned short magic = BMP_MAGIC;
 	
 	fwrite (&magic, sizeof (magic), 1, img_file);
 	/* Use the type instead of the variable because its a pointer! */
