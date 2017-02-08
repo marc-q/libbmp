@@ -29,9 +29,7 @@ bmp_header_init_df (bmp_header *header, const int width, const int height)
 
 enum bmp_error
 bmp_header_write (const bmp_header *header, FILE *img_file)
-{
-	unsigned short magic;
-	
+{	
 	/* Check for errors: */
 	if (header == NULL)
 	{
@@ -44,7 +42,7 @@ bmp_header_write (const bmp_header *header, FILE *img_file)
 		return BMP_FILE_NOT_OPENED;
 	}
 	
-	magic = BMP_MAGIC;
+	const unsigned magic = BMP_MAGIC;
 	
 	fwrite (&magic, sizeof (magic), 1, img_file);
 	/* Use the type instead of the variable because its a pointer! */
@@ -56,14 +54,14 @@ bmp_header_write (const bmp_header *header, FILE *img_file)
 
 enum bmp_error
 bmp_header_read (bmp_header *header, FILE *img_file)
-{
-	unsigned short magic;
-	
+{	
 	if (img_file == NULL)
 	{
 		/* ERROR: No file opened! */
 		return BMP_FILE_NOT_OPENED;
 	}
+	
+	unsigned short magic;
 	
 	/* Check if its an bmp file by comparing the magic nbr: */
 	if (fread (&magic, sizeof (magic), 1, img_file) > 0 &&
@@ -96,7 +94,7 @@ bmp_pixel_init (bmp_pixel *pxl, const unsigned char red, const unsigned char gre
 void
 bmp_img_alloc (bmp_img *img)
 {
-	size_t h = abs (img->img_header.biHeight);
+	const size_t h = abs (img->img_header.biHeight);
 	
 	/* Allocate the required memory for the pixels: */
 	img->img_pixels = malloc (sizeof (bmp_pixel*) * h);
@@ -119,7 +117,7 @@ bmp_img_init_df (bmp_img *img, const int width, const int height)
 void
 bmp_img_free (bmp_img *img)
 {
-	size_t h = abs (img->img_header.biHeight);
+	const size_t h = abs (img->img_header.biHeight);
 	
 	for (size_t y = 0; y < h; y++)
 	{
@@ -131,11 +129,7 @@ bmp_img_free (bmp_img *img)
 enum bmp_error
 bmp_img_write (const bmp_img *img, const char *filename)
 {
-	size_t offset = 0, h;
-	unsigned char padding[3];
-	FILE *img_file;
-	
-	img_file = fopen (filename, "wb");
+	FILE *img_file = fopen (filename, "wb");
 	
 	if (img_file == NULL)
 	{
@@ -143,27 +137,30 @@ bmp_img_write (const bmp_img *img, const char *filename)
 		return BMP_FILE_NOT_OPENED;
 	}
 	
-	/* NOTE: This way the correct error code could be returned. */
-	h = bmp_header_write (&img->img_header, img_file);
+	// NOTE: This way the correct error code could be returned.
+	const enum bmp_error err = bmp_header_write (&img->img_header, img_file);
 	
-	if (h != BMP_OK)
+	if (err != BMP_OK)
 	{
 		/* ERROR: Could'nt write the header! */
 		fclose (img_file);
-		return h;
+		return err;
 	}
 	
-	/* Select the mode (bottom-up or top-down): */
-	h = abs (img->img_header.biHeight);
+	// Select the mode (bottom-up or top-down):
+	const size_t h	= abs (img->img_header.biHeight);
+	size_t offset	= 0;
 	
 	if (img->img_header.biHeight > 0)
 	{
 		offset = h - 1;
 	}
 	
-	/* Write the content: */
+	// Create the padding:
+	unsigned char padding[3];
 	memset (padding, '\0', sizeof (padding));
 	
+	// Write the content:
 	for (size_t y = 0; y < h; y++)
 	{
 		/* Write a whole row of pixels to the file: */
@@ -180,12 +177,8 @@ bmp_img_write (const bmp_img *img, const char *filename)
 
 enum bmp_error
 bmp_img_read (bmp_img *img, const char *filename)
-{
-	size_t h;
-	long seek_offset;
-	FILE *img_file;
-	
-	img_file = fopen (filename, "rb");
+{	
+	FILE *img_file = fopen (filename, "rb");
 	
 	if (img_file == NULL)
 	{
@@ -194,19 +187,19 @@ bmp_img_read (bmp_img *img, const char *filename)
 	}
 	
 	/* NOTE: This way the correct error code could be returned. */
-	h = bmp_header_read (&img->img_header, img_file);
+	const enum bmp_error err = bmp_header_read (&img->img_header, img_file);
 	
-	if (h != BMP_OK)
+	if (err != BMP_OK)
 	{
 		/* ERROR: Could'nt read the image header! */
 		fclose (img_file);
-		return h;
+		return err;
 	}
 	
 	bmp_img_alloc (img);
 	
 	/* Select the mode (bottom-up or top-down): */
-	seek_offset = sizeof (unsigned char) * BMP_GET_PADDING (img->img_header.biWidth);
+	long seek_offset = sizeof (unsigned char) * BMP_GET_PADDING (img->img_header.biWidth);
 	
 	if (img->img_header.biHeight > 0)
 	{
@@ -216,7 +209,8 @@ bmp_img_read (bmp_img *img, const char *filename)
 	}
 	
 	/* Read the content: */
-	h = abs (img->img_header.biHeight);
+	const size_t h = abs (img->img_header.biHeight);
+	
 	for (size_t y = 0; y < h; y++)
 	{
 		/* Read a whole row of pixels from the file: */
