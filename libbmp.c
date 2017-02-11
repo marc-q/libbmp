@@ -50,7 +50,7 @@ bmp_header_write (const bmp_header *header, FILE *img_file)
 
 enum bmp_error
 bmp_header_read (bmp_header *header, FILE *img_file)
-{	
+{
 	if (img_file == NULL)
 	{
 		return BMP_FILE_NOT_OPENED;
@@ -164,7 +164,7 @@ bmp_img_write (const bmp_img *img, const char *filename)
 
 enum bmp_error
 bmp_img_read (bmp_img *img, const char *filename)
-{	
+{
 	FILE *img_file = fopen (filename, "rb");
 	
 	if (img_file == NULL)
