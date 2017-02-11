@@ -142,13 +142,8 @@ bmp_img_write (const bmp_img *img, const char *filename)
 	}
 	
 	// Select the mode (bottom-up or top-down):
-	const size_t h	= abs (img->img_header.biHeight);
-	size_t offset	= 0;
-	
-	if (img->img_header.biHeight > 0)
-	{
-		offset = h - 1;
-	}
+	const size_t h = abs (img->img_header.biHeight);
+	const size_t offset = (img->img_header.biHeight > 0 ? h - 1 : 0);
 	
 	// Create the padding:
 	const unsigned char padding[3] = {'\0', '\0', '\0'};
