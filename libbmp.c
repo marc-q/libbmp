@@ -105,7 +105,6 @@ bmp_img_init_df (bmp_img *img, const int width, const int height)
 {
 	// INIT the header with default values:
 	bmp_header_init_df (&img->img_header, width, height);
-	// ALLOCATE the img:
 	bmp_img_alloc (img);
 }
 
