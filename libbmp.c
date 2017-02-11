@@ -60,6 +60,7 @@ bmp_header_read (bmp_header *header, FILE *img_file)
 		return BMP_FILE_NOT_OPENED;
 	}
 	
+	// Since an adress must be passed to fread, create a variable!
 	unsigned short magic;
 	
 	// Check if its an bmp file by comparing the magic nbr:
@@ -156,8 +157,7 @@ bmp_img_write (const bmp_img *img, const char *filename)
 	}
 	
 	// Create the padding:
-	unsigned char padding[3];
-	memset (padding, '\0', sizeof (padding));
+	const unsigned char padding[3] = {'\0', '\0', '\0'};
 	
 	// Write the content:
 	for (size_t y = 0; y < h; y++)
