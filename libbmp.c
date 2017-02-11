@@ -11,7 +11,6 @@
 void
 bmp_header_init_df (bmp_header *header, const int width, const int height)
 {
-	// Init a bmp_header with the default values.
 	header->bfSize = (sizeof (bmp_pixel) * width + sizeof (unsigned char) * BMP_GET_PADDING (width)) * abs (height);
 	header->bfReserved = 0;
 	header->bfOffBits = 54;
@@ -33,12 +32,10 @@ bmp_header_write (const bmp_header *header, FILE *img_file)
 {
 	if (header == NULL)
 	{
-		// ERROR: bmp_header not initialized!
 		return BMP_HEADER_NOT_INITIALIZED; 
 	}
 	else if (img_file == NULL)
 	{
-		// ERROR: No file opened!
 		return BMP_FILE_NOT_OPENED;
 	}
 	
@@ -56,7 +53,6 @@ bmp_header_read (bmp_header *header, FILE *img_file)
 {	
 	if (img_file == NULL)
 	{
-		// ERROR: No file opened!
 		return BMP_FILE_NOT_OPENED;
 	}
 	
@@ -67,7 +63,6 @@ bmp_header_read (bmp_header *header, FILE *img_file)
 	if (fread (&magic, sizeof (magic), 1, img_file) > 0 &&
 	    magic != BMP_MAGIC)
 	{
-		// ERROR: Not an BMP file!
 		return BMP_INVALID_FILE;
 	}
 	
@@ -133,7 +128,6 @@ bmp_img_write (const bmp_img *img, const char *filename)
 	
 	if (img_file == NULL)
 	{
-		// ERROR: File could'nt be opened!
 		return BMP_FILE_NOT_OPENED;
 	}
 	
@@ -181,7 +175,6 @@ bmp_img_read (bmp_img *img, const char *filename)
 	
 	if (img_file == NULL)
 	{
-		// ERROR: File could'nt be opened!
 		return BMP_FILE_NOT_OPENED;
 	}
 	
