@@ -14,7 +14,7 @@ main (int argc, char *argv[])
 	
 	bmp_img_init_df (&img, 512, 512);
 
-	/* Draw a checkerboard pattern: */
+	// Draw a checkerboard pattern:
 	for (y = 0; y < 512; y++)
 	{	
 		for (x = 0; x < 512; x++)

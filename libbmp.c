@@ -1,16 +1,17 @@
-/* Copyright 2016 - 2017 Marc Volker Dickmann */
-/* Project: LibBMP */
+/* Copyright 2016 - 2017 Marc Volker Dickmann
+ * Project: LibBMP
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "libbmp.h"
 
-/* BMP_HEADER */
+// BMP_HEADER
 
 void
 bmp_header_init_df (bmp_header *header, const int width, const int height)
 {
-	/* Init a bmp_header with the default values. */
+	// Init a bmp_header with the default values.
 	header->bfSize = (sizeof (bmp_pixel) * width + sizeof (unsigned char) * BMP_GET_PADDING (width)) * abs (height);
 	header->bfReserved = 0;
 	header->bfOffBits = 54;
@@ -29,26 +30,24 @@ bmp_header_init_df (bmp_header *header, const int width, const int height)
 
 enum bmp_error
 bmp_header_write (const bmp_header *header, FILE *img_file)
-{	
-	/* Check for errors: */
+{
 	if (header == NULL)
 	{
-		/* ERROR: bmp_header not initialized! */
+		// ERROR: bmp_header not initialized!
 		return BMP_HEADER_NOT_INITIALIZED; 
 	}
 	else if (img_file == NULL)
 	{
-		/* ERROR: No file opened! */
+		// ERROR: No file opened!
 		return BMP_FILE_NOT_OPENED;
 	}
 	
+	// Since an adress must be passed to fwrite, create a variable!
 	const unsigned short magic = BMP_MAGIC;
-	
 	fwrite (&magic, sizeof (magic), 1, img_file);
-	/* Use the type instead of the variable because its a pointer! */
-	fwrite (header, sizeof (bmp_header), 1, img_file);
 	
-	/* NOTE: All good! */
+	// Use the type instead of the variable because its a pointer!
+	fwrite (header, sizeof (bmp_header), 1, img_file);
 	return BMP_OK;
 }
 
@@ -57,17 +56,17 @@ bmp_header_read (bmp_header *header, FILE *img_file)
 {	
 	if (img_file == NULL)
 	{
-		/* ERROR: No file opened! */
+		// ERROR: No file opened!
 		return BMP_FILE_NOT_OPENED;
 	}
 	
 	unsigned short magic;
 	
-	/* Check if its an bmp file by comparing the magic nbr: */
+	// Check if its an bmp file by comparing the magic nbr:
 	if (fread (&magic, sizeof (magic), 1, img_file) > 0 &&
 	    magic != BMP_MAGIC)
 	{
-		/* ERROR: Not an BMP file! */
+		// ERROR: Not an BMP file!
 		return BMP_INVALID_FILE;
 	}
 	
@@ -79,7 +78,7 @@ bmp_header_read (bmp_header *header, FILE *img_file)
 	return BMP_OK;
 }
 
-/* BMP_PIXEL */
+// BMP_PIXEL
 
 void
 bmp_pixel_init (bmp_pixel *pxl, const unsigned char red, const unsigned char green, const unsigned char blue)
@@ -89,14 +88,14 @@ bmp_pixel_init (bmp_pixel *pxl, const unsigned char red, const unsigned char gre
 	pxl->blue = blue;
 }
 
-/* BMP_IMG */
+// BMP_IMG
 
 void
 bmp_img_alloc (bmp_img *img)
 {
 	const size_t h = abs (img->img_header.biHeight);
 	
-	/* Allocate the required memory for the pixels: */
+	// Allocate the required memory for the pixels:
 	img->img_pixels = malloc (sizeof (bmp_pixel*) * h);
 	
 	for (size_t y = 0; y < h; y++)
@@ -108,9 +107,9 @@ bmp_img_alloc (bmp_img *img)
 void
 bmp_img_init_df (bmp_img *img, const int width, const int height)
 {
-	/* INIT the header with default values: */
+	// INIT the header with default values:
 	bmp_header_init_df (&img->img_header, width, height);
-	/* ALLOCATE the img: */
+	// ALLOCATE the img:
 	bmp_img_alloc (img);
 }
 
@@ -133,7 +132,7 @@ bmp_img_write (const bmp_img *img, const char *filename)
 	
 	if (img_file == NULL)
 	{
-		/* ERROR: File could'nt be opened! */
+		// ERROR: File could'nt be opened!
 		return BMP_FILE_NOT_OPENED;
 	}
 	
@@ -142,7 +141,7 @@ bmp_img_write (const bmp_img *img, const char *filename)
 	
 	if (err != BMP_OK)
 	{
-		/* ERROR: Could'nt write the header! */
+		// ERROR: Could'nt write the header!
 		fclose (img_file);
 		return err;
 	}
@@ -163,14 +162,14 @@ bmp_img_write (const bmp_img *img, const char *filename)
 	// Write the content:
 	for (size_t y = 0; y < h; y++)
 	{
-		/* Write a whole row of pixels to the file: */
+		// Write a whole row of pixels to the file:
 		fwrite (img->img_pixels[abs (offset - y)], sizeof (bmp_pixel), img->img_header.biWidth, img_file);
 		
-		/* Write the padding for the row! */
+		// Write the padding for the row!
 		fwrite (padding, sizeof (unsigned char), BMP_GET_PADDING (img->img_header.biWidth), img_file);
 	}
 	
-	/* NOTE: All good! */
+	// NOTE: All good!
 	fclose (img_file);
 	return BMP_OK;
 }
@@ -182,49 +181,49 @@ bmp_img_read (bmp_img *img, const char *filename)
 	
 	if (img_file == NULL)
 	{
-		/* ERROR: File could'nt be opened! */
+		// ERROR: File could'nt be opened!
 		return BMP_FILE_NOT_OPENED;
 	}
 	
-	/* NOTE: This way the correct error code could be returned. */
+	// NOTE: This way the correct error code can be returned.
 	const enum bmp_error err = bmp_header_read (&img->img_header, img_file);
 	
 	if (err != BMP_OK)
 	{
-		/* ERROR: Could'nt read the image header! */
+		// ERROR: Could'nt read the image header!
 		fclose (img_file);
 		return err;
 	}
 	
 	bmp_img_alloc (img);
 	
-	/* Select the mode (bottom-up or top-down): */
+	// Select the mode (bottom-up or top-down):
 	long seek_offset = sizeof (unsigned char) * BMP_GET_PADDING (img->img_header.biWidth);
 	
 	if (img->img_header.biHeight > 0)
 	{
-		/* For the first row it seek's one row from the SEEK_END. */
+		// For the first row it seek's one row from the SEEK_END.
 		fseek (img_file, (sizeof (bmp_pixel) * img->img_header.biWidth * -1) - seek_offset, SEEK_END);
 		seek_offset = (sizeof (bmp_pixel) * img->img_header.biWidth * -2) - seek_offset;
 	}
 	
-	/* Read the content: */
+	// Read the content:
 	const size_t h = abs (img->img_header.biHeight);
 	
 	for (size_t y = 0; y < h; y++)
 	{
-		/* Read a whole row of pixels from the file: */
+		// Read a whole row of pixels from the file:
 		if (fread (img->img_pixels[y], sizeof (bmp_pixel), img->img_header.biWidth, img_file) == 0)
 		{
 			fclose (img_file);
 			return BMP_ERROR;
 		}
 		
-		/* Skip the padding: */
+		// Skip the padding:
 		fseek (img_file, seek_offset, SEEK_CUR);
 	}
 	
-	/* NOTE: All good! */
+	// NOTE: All good!
 	fclose (img_file);
 	return BMP_OK;
 }
