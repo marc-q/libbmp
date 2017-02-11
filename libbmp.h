@@ -51,15 +51,15 @@ struct _bmp_img
 
 typedef struct _bmp_img bmp_img;
 
-/* BMP_HEADER */
+// BMP_HEADER
 void bmp_header_init_df (bmp_header*, const int, const int);
 enum bmp_error bmp_header_write (const bmp_header*, FILE*);
 enum bmp_error bmp_header_read (bmp_header*, FILE*);
 
-/* BMP_PIXEL */
+// BMP_PIXEL
 void bmp_pixel_init (bmp_pixel*, const unsigned char, const unsigned char, const unsigned char);
 
-/* BMP_IMG */
+// BMP_IMG
 void bmp_img_alloc (bmp_img*);
 void bmp_img_init_df (bmp_img*, const int, const int);
 void bmp_img_free (bmp_img*);
