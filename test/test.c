@@ -1,12 +1,13 @@
-/* Copyright 2016 - 2017 Marc Volker Dickmann */
-/* Project: LibBMP */
+/* Copyright 2016 - 2017 Marc Volker Dickmann
+ * Project: LibBMP
+ */
 #include <stdio.h>
 #include "../libbmp.h"
 
 #define BMP_TEST_PASSED 1
 #define BMP_TEST_FAILED 0
 
-/* Utils */
+// Utils
 
 static void
 bmp_test_print_summary (const int points, const int points_max)
@@ -27,7 +28,7 @@ bmp_test_print_failed (const char *name)
 	printf ("%s\t\tFAILED!\n", name);
 }
 
-/* MACROS */
+// MACROS
 
 static int
 bmp_test_get_padding (void)
@@ -49,7 +50,7 @@ bmp_test_get_padding (void)
 	return BMP_TEST_FAILED;
 }
 
-/* Header */
+// Header
 
 static int
 bmp_test_header_size (void)
@@ -71,7 +72,7 @@ bmp_test_header_init_df (void)
 	int passed = BMP_TEST_PASSED;
 	bmp_header header;
 	
-	/* Test positive height value: */
+	// Test positive height value:
 	bmp_header_init_df (&header, 100, 100);
 	
 	if (header.bfSize != (sizeof (bmp_pixel) * 10000) ||
@@ -81,7 +82,7 @@ bmp_test_header_init_df (void)
 		passed = BMP_TEST_FAILED;
 	}
 	
-	/* Test negative height value with padding: */
+	// Test negative height value with padding:
 	bmp_header_init_df (&header, 102, -100);
 	
 	if (header.bfSize != (sizeof (bmp_pixel) * 10200) + 200 ||
@@ -91,7 +92,7 @@ bmp_test_header_init_df (void)
 		passed = BMP_TEST_FAILED;
 	}
 	
-	/* Return the result: */
+	// Return the result:
 	if (passed == BMP_TEST_PASSED)
 	{
 		bmp_test_print_passed ("header_init_df");
@@ -102,7 +103,7 @@ bmp_test_header_init_df (void)
 	return BMP_TEST_FAILED;
 }
 
-/* Pixel */
+// Pixel
 
 static int
 bmp_test_pixel_init (void)
