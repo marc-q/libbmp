@@ -60,7 +60,7 @@ bmp_header_read (bmp_header *header, FILE *img_file)
 	unsigned short magic;
 	
 	// Check if its an bmp file by comparing the magic nbr:
-	if (fread (&magic, sizeof (magic), 1, img_file) > 0 &&
+	if (fread (&magic, sizeof (magic), 1, img_file) != 1 ||
 	    magic != BMP_MAGIC)
 	{
 		return BMP_INVALID_FILE;
@@ -70,7 +70,7 @@ bmp_header_read (bmp_header *header, FILE *img_file)
 	{
 		return BMP_ERROR;
 	}
-	
+
 	return BMP_OK;
 }
 
@@ -185,29 +185,22 @@ bmp_img_read (bmp_img *img, const char *filename)
 	bmp_img_alloc (img);
 	
 	// Select the mode (bottom-up or top-down):
-	long seek_offset = sizeof (unsigned char) * BMP_GET_PADDING (img->img_header.biWidth);
-	
-	if (img->img_header.biHeight > 0)
-	{
-		// For the first row it seek's one row from the SEEK_END.
-		fseek (img_file, (sizeof (bmp_pixel) * img->img_header.biWidth * -1) - seek_offset, SEEK_END);
-		seek_offset = (sizeof (bmp_pixel) * img->img_header.biWidth * -2) - seek_offset;
-	}
+	const size_t h = abs (img->img_header.biHeight);
+	const size_t offset = (img->img_header.biHeight > 0 ? h - 1 : 0);
+	const size_t padding = BMP_GET_PADDING (img->img_header.biWidth);
 	
 	// Read the content:
-	const size_t h = abs (img->img_header.biHeight);
-	
 	for (size_t y = 0; y < h; y++)
 	{
 		// Read a whole row of pixels from the file:
-		if (fread (img->img_pixels[y], sizeof (bmp_pixel), img->img_header.biWidth, img_file) == 0)
+		if (fread (img->img_pixels[abs (offset - y)], sizeof (bmp_pixel), img->img_header.biWidth, img_file) == 0)
 		{
 			fclose (img_file);
 			return BMP_ERROR;
 		}
 		
 		// Skip the padding:
-		fseek (img_file, seek_offset, SEEK_CUR);
+		fseek (img_file, padding, SEEK_CUR);
 	}
 	
 	// NOTE: All good!
