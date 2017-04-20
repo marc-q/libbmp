@@ -9,15 +9,13 @@ A simple Bitmap (BMP) library written in pure C.
 int
 main (int argc, char *argv[])
 {
-	int x, y;
 	bmp_img img;
-	
 	bmp_img_init_df (&img, 512, 512);
 
 	// Draw a checkerboard pattern:
-	for (y = 0; y < 512; y++)
-	{	
-		for (x = 0; x < 512; x++)
+	for (size_t y = 0; y < 512; y++)
+	{
+		for (size_t x = 0; x < 512; x++)
 		{
 			if ((y % 128 < 64 && x % 128 < 64) ||
 			    (y % 128 >= 64 && x % 128 >= 64))
