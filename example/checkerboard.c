@@ -1,10 +1,5 @@
-# libbmp
-A simple Bitmap (BMP) library written in pure C.
-
-### Example: Checkerboard-pattern
-```C
 #include <stdio.h>
-#include "libbmp.h"
+#include "../libbmp.h"
 
 int
 main (int argc, char *argv[])
@@ -33,4 +28,3 @@ main (int argc, char *argv[])
 	bmp_img_free (&img);
 	return 0;
 }
-```
