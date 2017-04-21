@@ -65,7 +65,7 @@ bmp_header_read (bmp_header *header, FILE *img_file)
 		return BMP_INVALID_FILE;
 	}
 	
-	if (fread (header, sizeof (bmp_header), 1, img_file) == 0)
+	if (fread (header, sizeof (bmp_header), 1, img_file) != 1)
 	{
 		return BMP_ERROR;
 	}
@@ -188,11 +188,14 @@ bmp_img_read (bmp_img *img, const char *filename)
 	const size_t offset = (img->img_header.biHeight > 0 ? h - 1 : 0);
 	const size_t padding = BMP_GET_PADDING (img->img_header.biWidth);
 	
+	// Needed to compare the return value of fread
+	const size_t items = img->img_header.biWidth;
+	
 	// Read the content:
 	for (size_t y = 0; y < h; y++)
 	{
 		// Read a whole row of pixels from the file:
-		if (fread (img->img_pixels[abs (offset - y)], sizeof (bmp_pixel), img->img_header.biWidth, img_file) == 0)
+		if (fread (img->img_pixels[abs (offset - y)], sizeof (bmp_pixel), items, img_file) != items)
 		{
 			fclose (img_file);
 			return BMP_ERROR;
