@@ -5,7 +5,7 @@ Instead of just using C code inside a wrapper, it is rewritten in native C++.
 
 ```C++
 #include <iostream>
-#include "lib/libbmp.h"
+#include "libbmp.h"
 
 int
 main ()
