@@ -1,7 +1,7 @@
 This is the C++ version of libbmp.   
 Instead of just using C code inside a wrapper, it is rewritten in native C++.
 
-# Example: Checkerboard-pattern
+### Example: Checkerboard-pattern
 
 ```C++
 #include <iostream>
