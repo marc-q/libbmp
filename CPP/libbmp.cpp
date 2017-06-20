@@ -46,6 +46,27 @@ BmpPixbuf::set_pixel (const int x,
 	data[index + 2] = r;
 }
 
+unsigned char
+BmpPixbuf::red_at (const int x,
+                   const int y)
+{
+	return data[(x * len_pixel) + (y * len_row) + 2];
+}
+
+unsigned char
+BmpPixbuf::green_at (const int x,
+                     const int y)
+{
+	return data[(x * len_pixel) + (y * len_row) + 1];
+}
+
+unsigned char
+BmpPixbuf::blue_at (const int x,
+                    const int y)
+{
+	return data[(x * len_pixel) + (y * len_row)];
+}
+
 void
 BmpPixbuf::write (const int row,
                   std::ofstream& f)
