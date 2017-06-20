@@ -41,6 +41,14 @@ class BmpPixbuf
 		                const unsigned char g,
 		                const unsigned char b);
 		
+		unsigned char red_at (const int x,
+		                      const int y);
+		unsigned char green_at (const int x,
+		                        const int y);
+		unsigned char blue_at (const int x,
+		                       const int y);
+		
+		
 		void write (const int row,
 		            std::ofstream& f);
 		
