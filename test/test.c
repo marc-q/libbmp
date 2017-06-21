@@ -10,7 +10,8 @@
 // Utils
 
 static void
-bmp_test_print_summary (const int points, const int points_max)
+bmp_test_print_summary (const int points,
+                        const int points_max)
 {
 	printf ("\n\nPoints\t%i/%i\n", points, points_max);
 	printf ("Failed\t%i\n", points_max - points);
