@@ -40,6 +40,9 @@ typedef struct _bmp_pixel
 	unsigned char red;
 } bmp_pixel;
 
+// This is faster than a function call
+#define BMP_PIXEL(r,g,b) ((bmp_pixel){(b),(g),(r)})
+
 typedef struct _bmp_img
 {
 	bmp_header   img_header;
