@@ -8,9 +8,12 @@
 // BMP_HEADER
 
 void
-bmp_header_init_df (bmp_header *header, const int width, const int height)
+bmp_header_init_df (bmp_header *header,
+                    const int   width,
+                    const int   height)
 {
-	header->bfSize = (sizeof (bmp_pixel) * width + sizeof (unsigned char) * BMP_GET_PADDING (width)) * abs (height);
+	header->bfSize = (sizeof (bmp_pixel) * width + BMP_GET_PADDING (width))
+	                  * abs (height);
 	header->bfReserved = 0;
 	header->bfOffBits = 54;
 	header->biSize = 40;
@@ -27,7 +30,8 @@ bmp_header_init_df (bmp_header *header, const int width, const int height)
 }
 
 enum bmp_error
-bmp_header_write (const bmp_header *header, FILE *img_file)
+bmp_header_write (const bmp_header *header,
+                  FILE             *img_file)
 {
 	if (header == NULL)
 	{
@@ -48,7 +52,8 @@ bmp_header_write (const bmp_header *header, FILE *img_file)
 }
 
 enum bmp_error
-bmp_header_read (bmp_header *header, FILE *img_file)
+bmp_header_read (bmp_header *header,
+                 FILE       *img_file)
 {
 	if (img_file == NULL)
 	{
@@ -76,7 +81,10 @@ bmp_header_read (bmp_header *header, FILE *img_file)
 // BMP_PIXEL
 
 void
-bmp_pixel_init (bmp_pixel *pxl, const unsigned char red, const unsigned char green, const unsigned char blue)
+bmp_pixel_init (bmp_pixel           *pxl,
+                const unsigned char  red,
+                const unsigned char  green,
+                const unsigned char  blue)
 {
 	pxl->red = red;
 	pxl->green = green;
@@ -100,7 +108,9 @@ bmp_img_alloc (bmp_img *img)
 }
 
 void
-bmp_img_init_df (bmp_img *img, const int width, const int height)
+bmp_img_init_df (bmp_img   *img,
+                 const int  width,
+                 const int  height)
 {
 	// INIT the header with default values:
 	bmp_header_init_df (&img->img_header, width, height);
@@ -120,7 +130,8 @@ bmp_img_free (bmp_img *img)
 }
 
 enum bmp_error
-bmp_img_write (const bmp_img *img, const char *filename)
+bmp_img_write (const bmp_img *img,
+               const char    *filename)
 {
 	FILE *img_file = fopen (filename, "wb");
 	
@@ -162,7 +173,8 @@ bmp_img_write (const bmp_img *img, const char *filename)
 }
 
 enum bmp_error
-bmp_img_read (bmp_img *img, const char *filename)
+bmp_img_read (bmp_img    *img,
+              const char *filename)
 {
 	FILE *img_file = fopen (filename, "rb");
 	
