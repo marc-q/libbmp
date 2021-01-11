@@ -1,6 +1,8 @@
 #ifndef __LIBBMP_H__
 #define __LIBBMP_H__
 
+#include <stdio.h>
+
 #define BMP_MAGIC 19778
 
 #define BMP_GET_PADDING(a) ((a) % 4)
@@ -19,7 +21,7 @@ typedef struct _bmp_header
 	unsigned int   bfSize;
 	unsigned int   bfReserved;
 	unsigned int   bfOffBits;
-	
+
 	unsigned int   biSize;
 	int            biWidth;
 	int            biHeight;
