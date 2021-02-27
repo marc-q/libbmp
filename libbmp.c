@@ -161,7 +161,7 @@ bmp_img_write (const bmp_img *img,
 	for (size_t y = 0; y < h; y++)
 	{
 		// Write a whole row of pixels to the file:
-		fwrite (img->img_pixels[abs (offset - y)], sizeof (bmp_pixel), img->img_header.biWidth, img_file);
+		fwrite (img->img_pixels[offset - y], sizeof (bmp_pixel), img->img_header.biWidth, img_file);
 		
 		// Write the padding for the row!
 		fwrite (padding, sizeof (unsigned char), BMP_GET_PADDING (img->img_header.biWidth), img_file);
@@ -207,7 +207,7 @@ bmp_img_read (bmp_img    *img,
 	for (size_t y = 0; y < h; y++)
 	{
 		// Read a whole row of pixels from the file:
-		if (fread (img->img_pixels[abs (offset - y)], sizeof (bmp_pixel), items, img_file) != items)
+		if (fread (img->img_pixels[offset - y], sizeof (bmp_pixel), items, img_file) != items)
 		{
 			fclose (img_file);
 			return BMP_ERROR;
