@@ -1,6 +1,7 @@
 #ifndef __LIBBMP_H__
 #define __LIBBMP_H__
 
+#include <fstream>
 #include <vector>
 
 #define BMP_MAGIC 19778
